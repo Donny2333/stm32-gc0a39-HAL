@@ -21,6 +21,8 @@
 #include "lcd.h"
 #include "spi.h"
 
+#define DMA_BUFFER_SIZE            64U
+
 //管理LCD重要参数
 //默认为竖屏
 _lcd_dev lcddev;
@@ -125,15 +127,28 @@ void LCD_SetWindows(u16 xStar, u16 yStar, u16 xEnd, u16 yEnd) {
  * @retvalue   :None
 ******************************************************************************/
 void LCD_Clear(u16 Color) {
-    unsigned int i, m;
+    u8 i;
+    u16 dmaBuffer[DMA_BUFFER_SIZE];
+    u32 totalBytesToWrite;
+    u32 bytesToWriteThisTime;
+
     LCD_SetWindows(0, 0, lcddev.width - 1, lcddev.height - 1);
+
+    for (i = 0U; i < DMA_BUFFER_SIZE; i++) {
+        dmaBuffer[i] = __builtin_bswap16(Color);
+    }
+
+    totalBytesToWrite = (u32) lcddev.width * (u32) lcddev.height * (u32) sizeof(u16);
+    bytesToWriteThisTime = DMA_BUFFER_SIZE * (u16) sizeof(u16);
+
     LCD_CS_CLR;
     LCD_DC_SET;
-    for (i = 0; i < lcddev.height; i++) {
-        for (m = 0; m < lcddev.width; m++) {
-            SPI_WriteByte(Color >> 8);
-            SPI_WriteByte(Color);
+    while (totalBytesToWrite > 0UL) {
+        if (totalBytesToWrite < bytesToWriteThisTime) {
+            bytesToWriteThisTime = totalBytesToWrite;
         }
+        totalBytesToWrite -= bytesToWriteThisTime;
+        SPI_WriteData(&dmaBuffer, bytesToWriteThisTime);
     }
     LCD_CS_SET;
 }

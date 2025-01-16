@@ -1,9 +1,9 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    spi.h
+  * @file    dma.h
   * @brief   This file contains all the function prototypes for
-  *          the spi.c file
+  *          the dma.c file
   ******************************************************************************
   * @attention
   *
@@ -18,8 +18,8 @@
   */
 /* USER CODE END Header */
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __SPI_H__
-#define __SPI_H__
+#ifndef __DMA_H__
+#define __DMA_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,29 +28,25 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-/* USER CODE BEGIN Includes */
-#include <stdbool.h>
-/* USER CODE END Includes */
+/* DMA memory to memory transfer handles -------------------------------------*/
 
-extern SPI_HandleTypeDef hspi1;
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
 
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
 
-void MX_SPI1_Init(void);
+void MX_DMA_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-void SPI_WriteByte(u8 data);
 
-void SPI_WriteData(const void *data, uint16_t length);
-
-static void WaitForDMAWriteComplete(void);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __SPI_H__ */
+#endif /* __DMA_H__ */
 
